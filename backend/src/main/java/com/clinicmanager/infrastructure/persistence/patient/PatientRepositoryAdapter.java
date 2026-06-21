@@ -4,8 +4,10 @@ import com.clinicmanager.application.port.output.patient.PatientRepositoryPort;
 import com.clinicmanager.domain.model.patient.Patient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,5 +49,14 @@ public class PatientRepositoryAdapter implements PatientRepositoryPort {
     @Override
     public boolean existsByEmail(String email) {
         return jpaPatientRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<Patient> search(String name, String phone) {
+        List<PatientEntity> entities = jpaPatientRepository
+                .findByFullNameContainingIgnoreCaseAndPhoneContaining(name, phone);
+        return entities.stream()
+                .map(persistenceMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

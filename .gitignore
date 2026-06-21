@@ -9,8 +9,7 @@
 !**/CHANGELOG.md
 !CONTRIBUTING.md
 !**/CONTRIBUTING.md
-project_rules.md
-agent.md
+
 
 # Also ignore specific directories used for documentation/notes/guides
 guide/

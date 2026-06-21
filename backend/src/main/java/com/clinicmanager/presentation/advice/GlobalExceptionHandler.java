@@ -2,6 +2,7 @@ package com.clinicmanager.presentation.advice;
 
 import com.clinicmanager.domain.exception.BusinessException;
 import com.clinicmanager.domain.exception.patient.PatientAlreadyExistsException;
+import com.clinicmanager.domain.exception.patient.PatientNotFoundException;
 import com.clinicmanager.presentation.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -13,6 +14,12 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(PatientNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<Void> handlePatientNotFoundException(PatientNotFoundException ex) {
+        return ApiResponse.error("PATIENT_NOT_FOUND", ex.getMessage());
+    }
 
     @ExceptionHandler(PatientAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
