@@ -1,0 +1,7 @@
+ALTER TABLE phieu_kham 
+ADD COLUMN trieu_chung VARCHAR(1000),
+ADD COLUMN mach INT,
+ADD COLUMN nhiet_do DECIMAL(4,1),
+ADD COLUMN huyet_ap VARCHAR(20),
+ADD COLUMN can_nang DECIMAL(5,2),
+ADD COLUMN chieu_cao DECIMAL(5,2);

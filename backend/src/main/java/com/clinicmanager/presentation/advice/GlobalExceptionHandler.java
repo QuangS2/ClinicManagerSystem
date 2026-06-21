@@ -9,6 +9,9 @@ import com.clinicmanager.domain.exception.medicine.MedicineAlreadyExistsExceptio
 import com.clinicmanager.domain.exception.medicine.MedicineNotFoundException;
 import com.clinicmanager.domain.exception.user.UserAlreadyExistsException;
 import com.clinicmanager.domain.exception.user.UserNotFoundException;
+import com.clinicmanager.domain.exception.appointment.AppointmentNotFoundException;
+import com.clinicmanager.domain.exception.admission.MedicalSlipNotFoundException;
+import com.clinicmanager.domain.exception.admission.PatientAlreadyRegisteredException;
 import com.clinicmanager.presentation.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -25,6 +28,24 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiResponse<Void> handlePatientNotFoundException(PatientNotFoundException ex) {
         return ApiResponse.error("PATIENT_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(AppointmentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<Void> handleAppointmentNotFoundException(AppointmentNotFoundException ex) {
+        return ApiResponse.error("APPOINTMENT_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(MedicalSlipNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<Void> handleMedicalSlipNotFoundException(MedicalSlipNotFoundException ex) {
+        return ApiResponse.error("SLIP_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(PatientAlreadyRegisteredException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiResponse<Void> handlePatientAlreadyRegisteredException(PatientAlreadyRegisteredException ex) {
+        return ApiResponse.error("PATIENT_ALREADY_REGISTERED", ex.getMessage());
     }
 
     @ExceptionHandler(PatientAlreadyExistsException.class)
