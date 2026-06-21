@@ -12,6 +12,7 @@ import com.clinicmanager.domain.exception.user.UserNotFoundException;
 import com.clinicmanager.domain.exception.appointment.AppointmentNotFoundException;
 import com.clinicmanager.domain.exception.admission.MedicalSlipNotFoundException;
 import com.clinicmanager.domain.exception.admission.PatientAlreadyRegisteredException;
+import com.clinicmanager.domain.exception.examination.LabTestNotFoundException;
 import com.clinicmanager.presentation.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiResponse<Void> handleMedicalSlipNotFoundException(MedicalSlipNotFoundException ex) {
         return ApiResponse.error("SLIP_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(LabTestNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<Void> handleLabTestNotFoundException(LabTestNotFoundException ex) {
+        return ApiResponse.error("LAB_TEST_NOT_FOUND", ex.getMessage());
     }
 
     @ExceptionHandler(PatientAlreadyRegisteredException.class)
