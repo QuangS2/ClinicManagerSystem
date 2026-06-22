@@ -12,14 +12,27 @@ import java.util.Date;
 @Service
 public class JwtService implements TokenServicePort {
 
-    // A secret key of at least 256 bits (32 bytes)
-    private static final String SECRET_STRING = "clinicmanagersystemsupersecretkeyforjwtsigningandtokengenerationpurposes";
-    private final Key signingKey = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
+    private final Key signingKey;
+    private final long accessTokenExpiration;
+    private final long refreshTokenExpiration;
 
-    // Access token: 1 hour (3,600,000 ms)
-    private static final long ACCESS_TOKEN_EXPIRATION = 3600000;
-    // Refresh token: 7 days (604,800,000 ms)
-    private static final long REFRESH_TOKEN_EXPIRATION = 604800000;
+    public JwtService(
+            @org.springframework.beans.factory.annotation.Value("${JWT_SECRET}") String secretString,
+            @org.springframework.beans.factory.annotation.Value("${JWT_EXPIRATION_MS:3600000}") long accessTokenExpiration
+    ) {
+        byte[] keyBytes;
+        try {
+            keyBytes = io.jsonwebtoken.io.Decoders.BASE64.decode(secretString);
+            if (keyBytes.length < 32) {
+                keyBytes = secretString.getBytes();
+            }
+        } catch (Exception e) {
+            keyBytes = secretString.getBytes();
+        }
+        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = accessTokenExpiration * 7;
+    }
 
     @Override
     public String generateAccessToken(String username, String role) {
@@ -27,7 +40,7 @@ public class JwtService implements TokenServicePort {
                 .setSubject(username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -38,7 +51,7 @@ public class JwtService implements TokenServicePort {
                 .setSubject(username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }

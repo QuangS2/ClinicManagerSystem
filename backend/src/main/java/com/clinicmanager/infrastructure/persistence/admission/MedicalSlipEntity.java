@@ -37,16 +37,16 @@ public class MedicalSlipEntity {
     @Column(name = "mach")
     private Integer pulse;
 
-    @Column(name = "nhiet_do", precision = 4, scale = 1)
+    @Column(name = "nhiet_do", columnDefinition = "DECIMAL(4,1)")
     private Double temperature;
 
     @Column(name = "huyet_ap", length = 20)
     private String bloodPressure;
 
-    @Column(name = "can_nang", precision = 5, scale = 2)
+    @Column(name = "can_nang", columnDefinition = "DECIMAL(5,2)")
     private Double weight;
 
-    @Column(name = "chieu_cao", precision = 5, scale = 2)
+    @Column(name = "chieu_cao", columnDefinition = "DECIMAL(5,2)")
     private Double height;
 
     @Column(name = "chan_doan", length = 1000)
