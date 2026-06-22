@@ -9,4 +9,5 @@ public interface MedicalSlipRepositoryPort {
     MedicalSlip save(MedicalSlip medicalSlip);
     Optional<MedicalSlip> findById(UUID id);
     boolean existsActiveSlipByPatientIdAndDate(UUID patientId, LocalDate date);
+    java.util.List<MedicalSlip> findByDateRange(LocalDate startDate, LocalDate endDate);
 }

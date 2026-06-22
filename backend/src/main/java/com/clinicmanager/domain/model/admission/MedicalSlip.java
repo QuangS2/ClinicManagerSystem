@@ -33,14 +33,14 @@ public class MedicalSlip {
         this.weight = weight;
         this.height = height;
         this.diagnosis = diagnosis;
-        validate();
+        validate(id == null);
     }
 
-    private void validate() {
+    private void validate(boolean isNew) {
         if (examinationDate == null) {
             throw new InvalidMedicalSlipDataException("Ngày khám không được để trống.");
         }
-        if (examinationDate.isBefore(LocalDate.now())) {
+        if (isNew && examinationDate.isBefore(LocalDate.now())) {
             throw new InvalidMedicalSlipDataException("Ngày khám không được ở quá khứ.");
         }
         if (patientId == null) {

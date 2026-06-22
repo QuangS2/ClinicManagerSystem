@@ -45,4 +45,12 @@ public class MedicalSlipRepositoryAdapter implements MedicalSlipRepositoryPort {
                 activeStatuses
         );
     }
+
+    @Override
+    public List<MedicalSlip> findByDateRange(LocalDate startDate, LocalDate endDate) {
+        return jpaMedicalSlipRepository.findByExaminationDateBetween(startDate, endDate)
+                .stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
+    }
 }
