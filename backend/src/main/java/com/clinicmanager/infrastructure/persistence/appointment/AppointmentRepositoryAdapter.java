@@ -4,6 +4,8 @@ import com.clinicmanager.application.port.output.appointment.AppointmentReposito
 import com.clinicmanager.domain.model.appointment.Appointment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +29,15 @@ public class AppointmentRepositoryAdapter implements AppointmentRepositoryPort {
             return Optional.empty();
         }
         return jpaAppointmentRepository.findById(id.toString()).map(persistenceMapper::toDomain);
+    }
+
+    @Override
+    public List<Appointment> findByPatientIdAndDate(UUID patientId, LocalDate date) {
+        if (patientId == null || date == null) {
+            return java.util.Collections.emptyList();
+        }
+        return jpaAppointmentRepository.findByPatientIdAndAppointmentDate(patientId.toString(), date).stream()
+                .map(persistenceMapper::toDomain)
+                .collect(java.util.stream.Collectors.toList());
     }
 }
