@@ -10,4 +10,6 @@ import org.mapstruct.Mapper;
 public interface ReportMapper {
     DailyExaminationCountDto toDto(DailyExaminationCount domain);
     MedicalExaminationCountReportDto toDto(MedicalExaminationCountReport domain);
+    com.clinicmanager.application.dto.report.DailyRevenueDto toDto(com.clinicmanager.domain.model.report.DailyRevenue domain);
+    com.clinicmanager.application.dto.report.RevenueReportDto toDto(com.clinicmanager.domain.model.report.RevenueReport domain);
 }

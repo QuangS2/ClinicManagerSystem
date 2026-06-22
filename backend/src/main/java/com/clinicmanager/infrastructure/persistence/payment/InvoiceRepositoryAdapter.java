@@ -32,4 +32,14 @@ public class InvoiceRepositoryAdapter implements InvoiceRepositoryPort {
         return jpaInvoiceRepository.findByMedicalSlipId(medicalSlipId.toString())
                 .map(persistenceMapper::toDomain);
     }
+
+    @Override
+    public java.util.List<Invoice> findByDateRangeAndStatus(java.time.LocalDate startDate, java.time.LocalDate endDate, com.clinicmanager.domain.model.payment.InvoiceStatus status) {
+        java.time.LocalDateTime start = startDate.atStartOfDay();
+        java.time.LocalDateTime end = endDate.atTime(23, 59, 59, 999999999);
+        return jpaInvoiceRepository.findByCreatedAtBetweenAndStatus(start, end, status.name())
+                .stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
+    }
 }
