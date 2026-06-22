@@ -9,4 +9,5 @@ public interface PrescriptionRepositoryPort {
     Optional<Prescription> findById(UUID id);
     Optional<Prescription> findByMedicalSlipId(UUID medicalSlipId);
     boolean existsByMedicalSlipId(UUID medicalSlipId);
+    java.util.List<Prescription> findByMedicalSlipIds(java.util.List<UUID> medicalSlipIds);
 }

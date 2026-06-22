@@ -44,4 +44,15 @@ public class PrescriptionRepositoryAdapter implements PrescriptionRepositoryPort
         }
         return jpaPrescriptionRepository.existsByMedicalSlipId(medicalSlipId.toString());
     }
+
+    @Override
+    public java.util.List<Prescription> findByMedicalSlipIds(java.util.List<UUID> medicalSlipIds) {
+        if (medicalSlipIds == null || medicalSlipIds.isEmpty()) {
+            return java.util.List.of();
+        }
+        java.util.List<String> idsStr = medicalSlipIds.stream().map(UUID::toString).toList();
+        return jpaPrescriptionRepository.findByMedicalSlipIdIn(idsStr).stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
+    }
 }

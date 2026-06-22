@@ -10,4 +10,5 @@ public interface LabTestRepositoryPort {
     List<LabTest> saveAll(List<LabTest> labTests);
     Optional<LabTest> findById(UUID id);
     List<LabTest> findByMedicalSlipId(UUID medicalSlipId);
+    List<LabTest> findByMedicalSlipIds(List<UUID> medicalSlipIds);
 }

@@ -42,7 +42,19 @@ public class LabTestRepositoryAdapter implements LabTestRepositoryPort {
         if (medicalSlipId == null) {
             return List.of();
         }
-        List<LabTestEntity> entities = jpaLabTestRepository.findByMedicalSlipId(medicalSlipId.toString());
-        return persistenceMapper.toDomainList(entities);
+        return jpaLabTestRepository.findByMedicalSlipId(medicalSlipId.toString()).stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<LabTest> findByMedicalSlipIds(List<UUID> medicalSlipIds) {
+        if (medicalSlipIds == null || medicalSlipIds.isEmpty()) {
+            return List.of();
+        }
+        List<String> idsStr = medicalSlipIds.stream().map(UUID::toString).toList();
+        return jpaLabTestRepository.findByMedicalSlipIdIn(idsStr).stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
     }
 }

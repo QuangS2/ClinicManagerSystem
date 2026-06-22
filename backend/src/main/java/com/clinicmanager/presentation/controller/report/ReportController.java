@@ -1,10 +1,18 @@
 package com.clinicmanager.presentation.controller.report;
 
 import com.clinicmanager.application.dto.report.MedicalExaminationCountReportDto;
+import com.clinicmanager.application.dto.report.MedicalExaminationRatioReportDto;
+import com.clinicmanager.application.dto.report.DiseaseTrendReportDto;
 import com.clinicmanager.application.port.input.report.GetMedicalExaminationCountReportUseCase;
+import com.clinicmanager.application.port.input.report.GetMedicalExaminationRatioReportUseCase;
+import com.clinicmanager.application.port.input.report.GetDiseaseTrendReportUseCase;
 import com.clinicmanager.presentation.response.ApiResponse;
 import com.clinicmanager.presentation.response.report.DailyExaminationCountResponse;
+import com.clinicmanager.presentation.response.report.DailyExaminationRatioResponse;
+import com.clinicmanager.presentation.response.report.DiseaseTrendResponse;
 import com.clinicmanager.presentation.response.report.MedicalExaminationCountReportResponse;
+import com.clinicmanager.presentation.response.report.MedicalExaminationRatioReportResponse;
+import com.clinicmanager.presentation.response.report.DiseaseTrendReportResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +31,8 @@ public class ReportController {
 
     private final GetMedicalExaminationCountReportUseCase getMedicalExaminationCountReportUseCase;
     private final com.clinicmanager.application.port.input.report.GetRevenueReportUseCase getRevenueReportUseCase;
+    private final GetMedicalExaminationRatioReportUseCase getMedicalExaminationRatioReportUseCase;
+    private final GetDiseaseTrendReportUseCase getDiseaseTrendReportUseCase;
 
     @GetMapping("/examination-count")
     @PreAuthorize("hasRole('QUAN_LY')")
@@ -78,5 +88,64 @@ public class ReportController {
                 .build();
 
         return ApiResponse.success(response, "Lấy báo cáo doanh thu thành công.");
+    }
+
+    @GetMapping("/examination-ratio")
+    @PreAuthorize("hasRole('QUAN_LY')")
+    public ApiResponse<MedicalExaminationRatioReportResponse> getExaminationRatioReport(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        MedicalExaminationRatioReportDto dto = getMedicalExaminationRatioReportUseCase.getReport(startDate, endDate);
+
+        List<DailyExaminationRatioResponse> dailyResponses = dto.getDailyRatios().stream()
+                .map(d -> DailyExaminationRatioResponse.builder()
+                        .date(d.getDate())
+                        .totalExaminations(d.getTotalExaminations())
+                        .examinationsWithLabTests(d.getExaminationsWithLabTests())
+                        .examinationsWithMedicines(d.getExaminationsWithMedicines())
+                        .labTestRatio(d.getLabTestRatio())
+                        .medicineRatio(d.getMedicineRatio())
+                        .build())
+                .toList();
+
+        MedicalExaminationRatioReportResponse response = MedicalExaminationRatioReportResponse.builder()
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .totalExaminations(dto.getTotalExaminations())
+                .totalExaminationsWithLabTests(dto.getTotalExaminationsWithLabTests())
+                .totalExaminationsWithMedicines(dto.getTotalExaminationsWithMedicines())
+                .overallLabTestRatio(dto.getOverallLabTestRatio())
+                .overallMedicineRatio(dto.getOverallMedicineRatio())
+                .dailyRatios(dailyResponses)
+                .build();
+
+        return ApiResponse.success(response, "Lấy báo cáo tỷ lệ khám bệnh thành công.");
+    }
+
+    @GetMapping("/disease-trend")
+    @PreAuthorize("hasRole('QUAN_LY')")
+    public ApiResponse<DiseaseTrendReportResponse> getDiseaseTrendReport(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        DiseaseTrendReportDto dto = getDiseaseTrendReportUseCase.getReport(startDate, endDate);
+
+        List<DiseaseTrendResponse> trendResponses = dto.getTrends().stream()
+                .map(t -> DiseaseTrendResponse.builder()
+                        .diseaseName(t.getDiseaseName())
+                        .caseCount(t.getCaseCount())
+                        .percentage(t.getPercentage())
+                        .build())
+                .toList();
+
+        DiseaseTrendReportResponse response = DiseaseTrendReportResponse.builder()
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .totalCases(dto.getTotalCases())
+                .trends(trendResponses)
+                .build();
+
+        return ApiResponse.success(response, "Lấy báo cáo xu hướng mắc bệnh thành công.");
     }
 }
